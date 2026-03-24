@@ -1,38 +1,19 @@
 import os
 import sys
+import json
 import pandas as pd
 import numbers
 from openpyxl import load_workbook
 from openpyxl.utils import get_column_letter
 from openpyxl.styles import Border, Side
 
-# Column mapping for cleaning
-KEEP_COLS = {
-    "First Name": "First Name",
-    "Last Name": "Last Name",
-    "Email": "Email",
-    "Phone Number": "Phone Number",
-    "Mobile": "Phone Number",
-    "Job Title": "Job Title",
-    "Company Name": "Company",
-    "Industries": "Industry",
-    "Company Post Code/ZIP": "Postcode",
-    "Industry": "Industry",
-    "Country": "Country",
-    "City": "City",
-    "Postcode": "Postcode",
-    "Website URL": "Website URL",
-    "Website": "Website URL",
-    "Marketing Consent": "Marketing Consent",
-    "Lead Source": "Lead Source",
-}
+SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
+CONFIG_PATH = os.path.join(SCRIPT_DIR, "cleancolumns.json")
 
-COLUMN_ORDER = [
-    "First Name", "Last Name", "Email", "Phone Number",
-    "Job Title", "Company", "Industry", "Country",
-    "City", "Postcode", "Website URL",
-    "Marketing Consent", "Lead Source",
-]
+
+def load_config():
+    with open(CONFIG_PATH, "r", encoding="utf-8") as f:
+        return json.load(f)
 
 
 def read_csv_safe(file_path):
@@ -104,12 +85,16 @@ def adjust_format_excel(excel_path, width=20, number_format_threshold=7):
 
 
 def clean_csv_to_xlsx(input_csv, output_xlsx=None, log=print):
+    config = load_config()
+    keep_cols = config["columns"]
+    column_order = config["order"]
+
     df = read_csv_safe(input_csv)
     df.columns = df.columns.astype(str)
 
-    df = df[[col for col in df.columns if col in KEEP_COLS]]
-    df = df.rename(columns=KEEP_COLS)
-    df = df[[col for col in COLUMN_ORDER if col in df.columns]]
+    df = df[[col for col in df.columns if col in keep_cols]]
+    df = df.rename(columns=keep_cols)
+    df = df[[col for col in column_order if col in df.columns]]
 
     if "Phone Number" in df.columns:
         df["Phone Number"] = (

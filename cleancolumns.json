@@ -1,0 +1,42 @@
+{
+  "columns": {
+    "First Name": "First Name",
+    "Last Name": "Last Name",
+    "Email": "Email",
+    "Email Address": "Email",
+    "Phone Number": "Phone Number",
+    "Mobile": "Phone Number",
+    "Job Title": "Job Title",
+    "Company Name": "Company",
+    "Industries": "Industry",
+    "Company Post Code/ZIP": "Postcode",
+    "Industry": "Industry",
+    "Address 1  Country": "Country",
+    "Country": "Country",
+    "Address 1  City": "City",
+    "City": "City",
+    "Postcode": "Postcode",
+    "Address 1  Post Code": "Postcode",
+    "Website URL": "Website URL",
+    "Website": "Website URL",
+    "Marketing Consent": "Marketing Consent",
+    "Lead Source": "Lead Source",
+    "Test 1": "test 3"
+  },
+  "order": [
+    "First Name",
+    "Last Name",
+    "Email",
+    "Phone Number",
+    "Job Title",
+    "Company",
+    "Industry",
+    "City",
+    "Country",
+    "Postcode",
+    "Website URL",
+    "Marketing Consent",
+    "Lead Source",
+    "test 3"
+  ]
+}
