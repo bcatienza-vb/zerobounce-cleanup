@@ -4,6 +4,7 @@ import threading
 import json
 import os
 from processor import clean_csv_to_xlsx, process_zerobounce, CONFIG_PATH
+from tkinterdnd2 import TkinterDnD, DND_FILES
 
 
 class App:
@@ -28,6 +29,25 @@ class App:
             side="left", fill="x", expand=True, padx=(0, 5)
         )
         ttk.Button(file_frame, text="Browse", command=self._browse).pack(side="right")
+
+        # Drop zone
+        drop_frame = ttk.LabelFrame(self.root, text="or drop file here", padding=10)
+        drop_frame.pack(fill="x", **padding)
+
+        self.drop_label = ttk.Label(
+            drop_frame,
+            text="Drag & drop a CSV file here",
+            anchor="center",
+            font=("Segoe UI", 10, "italic"),
+            foreground="gray",
+        )
+        self.drop_label.pack(fill="x", expand=True, ipady=8)
+
+        drop_frame.drop_target_register(DND_FILES)
+        drop_frame.dnd_bind("<<Drop>>", self._handle_drop)
+
+        self.drop_label.drop_target_register(DND_FILES)
+        self.drop_label.dnd_bind("<<Drop>>", self._handle_drop)
 
         # Actions
         action_frame = ttk.LabelFrame(self.root, text="Actions", padding=10)
@@ -62,6 +82,15 @@ class App:
         )
         if path:
             self.file_path.set(path)
+
+    def _handle_drop(self, event):
+        raw = event.data
+        path = raw.strip().strip("{}").strip('"').strip("'")
+        if os.path.isfile(path):
+            self.file_path.set(path)
+            self._log(f"File loaded: {path}")
+        else:
+            messagebox.showerror("Invalid file", f"Could not find:\n{path}")
 
     def _log(self, message):
         self.log_text.configure(state="normal")
@@ -294,6 +323,6 @@ if __name__ == "__main__":
             windll.user32.SetProcessDPIAware()
         except Exception:
             pass
-    root = tk.Tk()
+    root = TkinterDnD.Tk()
     app = App(root)
     root.mainloop()
