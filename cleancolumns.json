@@ -21,7 +21,9 @@
     "Website": "Website URL",
     "Marketing Consent": "Marketing Consent",
     "Lead Source": "Lead Source",
-    "Test 1": "test 3"
+    "Test 1": "test 3",
+    "ZB Status": "ZB Status",
+    "ZB Sub status": "ZB Sub status"
   },
   "order": [
     "First Name",
@@ -37,6 +39,8 @@
     "Website URL",
     "Marketing Consent",
     "Lead Source",
-    "test 3"
+    "test 3",
+    "ZB Status",
+    "ZB Sub status"
   ]
 }
