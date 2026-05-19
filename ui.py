@@ -286,6 +286,14 @@ class SettingsWindow:
 
 
 if __name__ == "__main__":
+    try:
+        from ctypes import windll
+        windll.shcore.SetProcessDpiAwareness(2)
+    except Exception:
+        try:
+            windll.user32.SetProcessDPIAware()
+        except Exception:
+            pass
     root = tk.Tk()
     app = App(root)
     root.mainloop()
