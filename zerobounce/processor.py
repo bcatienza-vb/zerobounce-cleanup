@@ -1,19 +1,12 @@
 import os
 import sys
-import json
 import pandas as pd
 import numbers
 from openpyxl import load_workbook
 from openpyxl.utils import get_column_letter
 from openpyxl.styles import Border, Side
 
-SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
-CONFIG_PATH = os.path.join(SCRIPT_DIR, "cleancolumns.json")
-
-
-def load_config():
-    with open(CONFIG_PATH, "r", encoding="utf-8") as f:
-        return json.load(f)
+from .config import load_config
 
 
 def read_csv_safe(file_path):

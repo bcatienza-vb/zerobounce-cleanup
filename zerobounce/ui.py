@@ -3,8 +3,10 @@ from tkinter import ttk, filedialog, messagebox
 import threading
 import json
 import os
-from processor import clean_csv_to_xlsx, process_zerobounce, CONFIG_PATH
 from tkinterdnd2 import TkinterDnD, DND_FILES
+
+from .processor import clean_csv_to_xlsx, process_zerobounce
+from .config import CONFIG_PATH
 
 
 class App:
@@ -21,7 +23,6 @@ class App:
     def _build_ui(self):
         padding = {"padx": 10, "pady": 5}
 
-        # File selection
         file_frame = ttk.LabelFrame(self.root, text="Select File", padding=10)
         file_frame.pack(fill="x", **padding)
 
@@ -30,7 +31,6 @@ class App:
         )
         ttk.Button(file_frame, text="Browse", command=self._browse).pack(side="right")
 
-        # Drop zone
         drop_frame = ttk.LabelFrame(self.root, text="or drop file here", padding=10)
         drop_frame.pack(fill="x", **padding)
 
@@ -49,7 +49,6 @@ class App:
         self.drop_label.drop_target_register(DND_FILES)
         self.drop_label.dnd_bind("<<Drop>>", self._handle_drop)
 
-        # Actions
         action_frame = ttk.LabelFrame(self.root, text="Actions", padding=10)
         action_frame.pack(fill="x", **padding)
 
@@ -65,7 +64,6 @@ class App:
             action_frame, text="⚙ Settings", command=self._open_settings
         ).pack(side="right")
 
-        # Log
         log_frame = ttk.LabelFrame(self.root, text="Log", padding=10)
         log_frame.pack(fill="both", expand=True, **padding)
 
@@ -172,7 +170,6 @@ class SettingsWindow:
             json.dump(self.config, f, indent=2)
 
     def _build_ui(self):
-        # Treeview
         tree_frame = ttk.Frame(self.win, padding=10)
         tree_frame.pack(fill="both", expand=True)
 
@@ -189,7 +186,6 @@ class SettingsWindow:
         scrollbar.pack(side="right", fill="y")
         self.tree.pack(side="left", fill="both", expand=True)
 
-        # Reorder buttons
         reorder_frame = ttk.Frame(self.win, padding=(10, 0, 10, 5))
         reorder_frame.pack(fill="x")
 
@@ -203,7 +199,6 @@ class SettingsWindow:
             side="right"
         )
 
-        # Add column
         add_frame = ttk.LabelFrame(self.win, text="Add Column", padding=10)
         add_frame.pack(fill="x", padx=10, pady=(0, 10))
 
@@ -281,7 +276,6 @@ class SettingsWindow:
         if src in columns:
             del columns[src]
 
-        # Remove from order only if no other source maps to this target
         if not any(t == target for s, t in columns.items() if s != src):
             if target in self.config["order"]:
                 self.config["order"].remove(target)
@@ -314,7 +308,7 @@ class SettingsWindow:
         self.target_entry.delete(0, "end")
 
 
-if __name__ == "__main__":
+def main():
     try:
         from ctypes import windll
         windll.shcore.SetProcessDpiAwareness(2)
