@@ -67,6 +67,10 @@ class App:
         log_frame = ttk.LabelFrame(self.root, text="Log", padding=10)
         log_frame.pack(fill="both", expand=True, **padding)
 
+        clear_bar = ttk.Frame(log_frame)
+        clear_bar.pack(fill="x")
+        ttk.Button(clear_bar, text="Clear Log", command=self._clear_log).pack(side="right")
+
         self.log_text = tk.Text(log_frame, state="disabled", wrap="word", height=12)
         scrollbar = ttk.Scrollbar(log_frame, command=self.log_text.yview)
         self.log_text.configure(yscrollcommand=scrollbar.set)
@@ -94,6 +98,11 @@ class App:
         self.log_text.configure(state="normal")
         self.log_text.insert("end", message + "\n")
         self.log_text.see("end")
+        self.log_text.configure(state="disabled")
+
+    def _clear_log(self):
+        self.log_text.configure(state="normal")
+        self.log_text.delete("1.0", "end")
         self.log_text.configure(state="disabled")
 
     def _set_buttons(self, state):
