@@ -92,6 +92,7 @@ def clean_csv_to_xlsx(input_csv, output_xlsx=None, log=print):
     if "Phone Number" in df.columns:
         df["Phone Number"] = (
             df["Phone Number"]
+            .fillna("")
             .astype(str)
             .str.replace("\t", "", regex=False)
             .str.replace(r"(?!^)\+", "", regex=True)
