@@ -1,0 +1,85 @@
+name: Build and Publish
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: "Release version (example: 1.0.0)"
+        required: true
+        type: string
+      publish:
+        description: "Publish GitHub Release"
+        required: true
+        default: false
+        type: boolean
+
+jobs:
+  build:
+    runs-on: windows-latest
+    permissions:
+      contents: read
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        shell: pwsh
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+          pip install nuitka ordered-set zstandard
+
+      - name: Install Inno Setup
+        shell: pwsh
+        run: |
+          choco install innosetup -y --no-progress
+          $iscc = Get-Command iscc -ErrorAction Stop
+          & $iscc.Source /?
+          if ($LASTEXITCODE -ne 0) {
+            Write-Host "ISCC is installed and available at $($iscc.Source)"
+            $global:LASTEXITCODE = 0
+          }
+
+      - name: Build executable
+        shell: cmd
+        env:
+          SIGN_MODE: none
+          BUILD_MODE: standalone
+          BUILD_INSTALLER: 1
+        run: build.bat
+
+      - name: Upload build artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: zerobounce-windows-installer
+          path: build/installer/zerobounce-setup.exe
+          if-no-files-found: error
+
+  publish:
+    if: ${{ inputs.publish }}
+    needs: build
+    runs-on: ubuntu-latest
+    environment: release
+    permissions:
+      contents: write
+
+    steps:
+      - name: Download build artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: zerobounce-windows-installer
+          path: release
+
+      - name: Create GitHub release and upload asset
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: v${{ inputs.version }}
+          name: ZeroBounce Email Cleaner v${{ inputs.version }}
+          generate_release_notes: true
+          files: release/zerobounce-setup.exe
